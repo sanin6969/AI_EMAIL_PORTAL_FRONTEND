@@ -4,7 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 
-const BaseURL = 'http://127.0.0.1:8000'
+const BaseURL = 'https://51.21.194.37/'
 
 export const useRegister = () => {
   const navigate = useNavigate();
