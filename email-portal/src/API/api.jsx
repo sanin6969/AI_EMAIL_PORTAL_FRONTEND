@@ -4,7 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 
-const BaseURL = 'https://13.61.188.171/'
+const BaseURL = 'http://13.61.188.171'
 
 export const useRegister = () => {
   const navigate = useNavigate();
@@ -54,9 +54,6 @@ export const useLogin = () => {
       localStorage.setItem('user', JSON.stringify(decodedUser))
       toast.success('Logged in Succesfully');
       navigate('/joblist');
-    },
-    onError: (error) => {
-      toast.error(error)
     },
   });
 };
