@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRegister } from "../../API/api";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const registerMutation = useRegister();
@@ -16,7 +17,6 @@ const Register = () => {
     phone_number: "",
   });
 
-  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -27,31 +27,33 @@ const Register = () => {
     }
   };
 
-  const validateForm = () => {
-    let newErrors = {};
-    if (!formData.username.trim()) newErrors.username = "Username is required.";
-    if (!formData.password.trim()) newErrors.password = "Password is required.";
-    if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required.";
-    if (!formData.email.includes("@")) newErrors.email = "Invalid email format.";
-    if (!/^\d{10}$/.test(formData.phone_number)) newErrors.phone_number = "Phone number must be 10 digits.";
-    if (formData.resume && formData.resume.type !== "application/pdf") {
-      newErrors.resume = "Only PDF files are allowed.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
-      });
-      registerMutation.mutate(formDataToSend);
-    }
+    const formDataToSend = new FormData();
+    
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+  
+    registerMutation.mutate(formDataToSend, {
+      onError: (error) => {
+        console.log(error.response?.data);
+        
+        const errorMessage = 
+          error.response?.data?.username ? error.response?.data?.username  :
+          error.response?.data?.phone_number ? "Phone Number should be 10 digits" :
+          error.response?.data?.email ? "Email already in use" :
+          error.response?.data?.password ? error.response.data.password :
+          "Something went wrong!";
+        
+        toast.error(errorMessage);
+      },
+    });
   };
+  
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
@@ -63,17 +65,14 @@ const Register = () => {
             <div className="col-4">
               <label className="form-label">Username</label>
               <input type="text" className="form-control form-control-sm" name="username" value={formData.username} onChange={handleChange} required />
-              {errors.username && <div className="text-danger">{errors.username}</div>}
             </div>
             <div className="col-4">
               <label className="form-label">Password</label>
               <input type="password" className="form-control form-control-sm" name="password" value={formData.password} onChange={handleChange} required />
-              {errors.password && <div className="text-danger">{errors.password}</div>}
             </div>
             <div className="col-4">
               <label className="form-label">Full Name</label>
               <input type="text" className="form-control form-control-sm" name="full_name" value={formData.full_name} onChange={handleChange} required />
-              {errors.full_name && <div className="text-danger">{errors.full_name}</div>}
             </div>
           </div>
 
@@ -81,17 +80,14 @@ const Register = () => {
             <div className="col-4">
               <label className="form-label">Email</label>
               <input type="email" className="form-control form-control-sm" name="email" value={formData.email} onChange={handleChange} required />
-              {errors.email && <div className="text-danger">{errors.email}</div>}
             </div>
             <div className="col-4">
               <label className="form-label">Phone</label>
-              <input type="text" className="form-control form-control-sm" name="phone_number" value={formData.phone_number} onChange={handleChange} pattern="\d{10}" required />
-              {errors.phone_number && <div className="text-danger">{errors.phone_number}</div>}
+              <input type="text" className="form-control form-control-sm" name="phone_number" value={formData.phone_number} onChange={handleChange}  required />
             </div>
             <div className="col-4">
               <label className="form-label">Resume (PDF only)</label>
               <input type="file" className="form-control form-control-sm" name="resume" onChange={handleChange} accept=".pdf" required />
-              {errors.resume && <div className="text-danger">{errors.resume}</div>}
             </div>
           </div>
 

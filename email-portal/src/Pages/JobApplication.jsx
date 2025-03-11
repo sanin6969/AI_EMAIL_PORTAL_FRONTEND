@@ -7,7 +7,6 @@ export const JobApplication = () => {
   const EditApplicationMutation = useEditApplication();
   const { id } = useParams();
   const { data: jobapplication, isLoading } = JobApplicationView(id);
-  console.log();
 
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -85,10 +84,21 @@ export const JobApplication = () => {
                     <button
                       className="btn btn-primary btn-lg px-5 rounded-pill shadow"
                       onClick={() => sendEmailMutation.mutate(jobapplication[0]?.id)}
+                      disabled={sendEmailMutation.isLoading} 
                     >
-                      <i className="bi bi-send me-1"></i>Send Application
+                      {sendEmailMutation.isLoading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          Sending email...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-send me-1"></i>Send Application
+                        </>
+                      )}
                     </button>
                   </div>
+
                 </div>
               )}
             </div>
@@ -115,7 +125,7 @@ export const JobApplication = () => {
                       className="form-control form-control-lg border-0 shadow-sm"
                       id="subject"
                       name="subject"
-                      value={formData.subject}  
+                      value={formData.subject}
                       onChange={handleChange}
                       required
                     />
@@ -130,7 +140,7 @@ export const JobApplication = () => {
                       id="body"
                       name="body"
                       rows="8"
-                      value={formData.body}  
+                      value={formData.body}
                       onChange={handleChange}
                       required
                     ></textarea>

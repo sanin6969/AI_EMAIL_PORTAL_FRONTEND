@@ -27,9 +27,6 @@ export const useRegister = () => {
       toast.success('Registration successful');
       navigate('/login');
     },
-    onError: (error) => {
-      toast.error(error)
-    }
   });
 };
 

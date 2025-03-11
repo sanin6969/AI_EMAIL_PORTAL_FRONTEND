@@ -8,9 +8,6 @@ const JobListingPage = () => {
   const navigate = useNavigate();
   const { data: jobs } = useViewAllJobs();
   const { data: userjobs } = UserAppliedJobs();
-
-  console.log(userjobs, "user applied");
-
   const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
